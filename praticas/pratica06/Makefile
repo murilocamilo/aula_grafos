@@ -1,15 +1,10 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99
-TARGET = main
-SRC = main.c dijkstra.c
 
-all: $(TARGET)
+all: main
 
-$(TARGET): $(SRC)
-	$(CC) $(CFLAGS) -o $(TARGET) $(SRC)
+main: main.c dijkstra.c
+	$(CC) $(CFLAGS) main.c dijkstra.c -o main
 
 clean:
-	rm -f $(TARGET) *.o main.exe
-
-run: $(TARGET)
-	./$(TARGET)
+	rm -f main *.o
