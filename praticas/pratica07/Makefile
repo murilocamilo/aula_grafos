@@ -1,16 +1,17 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99
 
-all: main
+TARGET = main
+SRC = main.c bellman_ford.c
+OBJ = $(SRC:.c=.o)
 
-main: main.o bellman_ford.o
-	$(CC) $(CFLAGS) main.o bellman_ford.o -o main
+all: $(TARGET)
 
-main.o: main.c bellman_ford.h
-	$(CC) $(CFLAGS) -c main.c
+$(TARGET): $(OBJ)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ)
 
-bellman_ford.o: bellman_ford.c bellman_ford.h
-	$(CC) $(CFLAGS) -c bellman_ford.c
+%.o: %.c bellman_ford.h
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f *.o main
+	rm -f $(OBJ) $(TARGET) main.exe
