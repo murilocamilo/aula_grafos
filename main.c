@@ -1,41 +1,67 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "agm.h"
+#include "bellman_ford.h"
+
+// Funções auxiliares locais
+GrafoListaPonderado* criar_grafo(int V) {
+    GrafoListaPonderado *g = (GrafoListaPonderado*) malloc(sizeof(GrafoListaPonderado));
+    g->V = V;
+    g->E = 0;
+    g->listaAdj = (VerticeLista*) malloc(V * sizeof(VerticeLista));
+    for (int i = 0; i < V; i++) {
+        g->listaAdj[i].cabeca = NULL;
+    }
+    return g;
+}
+
+void adicionar_aresta(GrafoListaPonderado *g, int origem, int destino, int peso) {
+    ArestaPonderada *nova = (ArestaPonderada*) malloc(sizeof(ArestaPonderada));
+    nova->destino = destino;
+    nova->peso = peso;
+    nova->proximo = g->listaAdj[origem].cabeca;
+    g->listaAdj[origem].cabeca = nova;
+    g->E++;
+}
 
 int main(void) {
     int V = 4;
-    
-    // --- Teste do Kruskal ---
-    int E = 5;
-    Aresta *arestas = (Aresta *)malloc(E * sizeof(Aresta));
-    arestas[0] = (Aresta){0, 1, 10};
-    arestas[1] = (Aresta){0, 2, 6};
-    arestas[2] = (Aresta){0, 3, 5};
-    arestas[3] = (Aresta){1, 3, 15};
-    arestas[4] = (Aresta){2, 3, 4};
+    GrafoListaPonderado *g = criar_grafo(V);
 
-    kruskal(arestas, V, E);
-    free(arestas);
+    adicionar_aresta(g, 0, 1, 1);
+    adicionar_aresta(g, 1, 2, 2);
+    adicionar_aresta(g, 2, 3, 3);
+    adicionar_aresta(g, 0, 3, 10);
 
-    // --- Teste do Prim ---
-    // Criando matriz de adjacência para o Prim
-    int **grafo = (int **)malloc(V * sizeof(int *));
-    for (int i = 0; i < V; i++) {
-        grafo[i] = (int *)calloc(V, sizeof(int));
+    int *dist = (int*) malloc(V * sizeof(int));
+    int *pred = (int*) malloc(V * sizeof(int));
+
+    int origem = 0;
+    int resultado = bellman_ford(g, origem, dist, pred);
+
+    if (resultado) {
+        printf("Caminhos mais curtos a partir do vertice %d:\n", origem);
+        for (int i = 0; i < V; i++) {
+            printf("Distancia ate %d: %d\n", i, dist[i]);
+        }
+    } else {
+        printf("O grafo contem ciclo negativo.\n");
+        // A função de imprimir o ciclo já foi chamada dentro da bellman_ford
     }
 
-    // Preenchendo a matriz (grafo não direcionado)
-    grafo[0][1] = grafo[1][0] = 10;
-    grafo[0][2] = grafo[2][0] = 6;
-    grafo[0][3] = grafo[3][0] = 5;
-    grafo[1][3] = grafo[3][1] = 15;
-    grafo[2][3] = grafo[3][2] = 4;
-
-    prim(grafo, V);
-
-    // Liberando a matriz
-    for (int i = 0; i < V; i++) free(grafo[i]);
-    free(grafo);
+    free(dist);
+    free(pred);
+    
+    // Liberação da memória do grafo
+    for (int i = 0; i < V; i++) {
+        ArestaPonderada *atual = g->listaAdj[i].cabeca;
+        while (atual != NULL) {
+            ArestaPonderada *temp = atual;
+            atual = atual->proximo;
+            free(temp);
+        }
+    }
+    free(g->listaAdj);
+    free(g);
 
     return 0;
 }
