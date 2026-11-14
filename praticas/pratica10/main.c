@@ -195,7 +195,6 @@ int main(void) {
         fim = clock();
         double tempo_insercao = ((double)(fim - inicio)) / CLOCKS_PER_SEC * 1000.0;
 
-        // Impressão usando todas as variáveis para evitar o erro de compilação
         printf("%-5d | %-15.4f | %-15.4f | %-15.4f | %d\n", V, tempo_bt, tempo_vizinho, tempo_insercao, custo_bt);
         printf("  Custos -> BT: %d | Vizinho: %d | Insercao: %d\n", custo_bt, custo_vizinho, custo_insercao);
 
