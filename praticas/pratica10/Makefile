@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -std=c99
 
 TARGET = main
-SRC = main.c
+SRC = main.c hamiltoniano.c tps.c
 OBJ = $(SRC:.c=.o)
 
 all: $(TARGET)
@@ -10,7 +10,7 @@ all: $(TARGET)
 $(TARGET): $(OBJ)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ)
 
-%.o: %.c
+%.o: %.c hamiltoniano.h tps.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
